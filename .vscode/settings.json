@@ -1,0 +1,13 @@
+{
+  // Run ESLint fixes automatically on save for this workspace
+  "editor.codeActionsOnSave": {
+    // Use "explicit" per latest VS Code API to run only when a fixer exists
+    "source.fixAll.eslint": "explicit"
+  },
+  // Apply all available ESLint fixes for the file on save (not just existing problems)
+  "eslint.codeActionsOnSave.mode": "all",
+  // Ensure the extension uses ESLint Flat Config (eslint.config.js)
+  "eslint.useFlatConfig": true,
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.formatOnSave": true
+}
