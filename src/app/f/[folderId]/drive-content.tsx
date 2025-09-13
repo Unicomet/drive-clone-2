@@ -12,9 +12,9 @@ import Link from "next/link";
 export default function DriveContent(props: {
   files: (typeof files_table.$inferSelect)[];
   folders: (typeof folders_table.$inferSelect)[];
-  breadcrumbs: (typeof folders_table.$inferSelect)[];
+  folderParents: (typeof folders_table.$inferSelect)[];
 }) {
-  const { files, folders, breadcrumbs } = props;
+  const { files, folders, folderParents: breadcrumbs } = props;
 
   const [searchQuery, setSearchQuery] = useState("");
   const [isDark, setIsDark] = useState(true);
