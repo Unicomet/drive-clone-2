@@ -1,7 +1,7 @@
 import React from "react";
 import { mockFiles, mockFolders } from "~/lib/mock-data";
 import { db } from "~/server/db";
-import { files, folders } from "~/server/db/schema";
+import { files_table, folders_table } from "~/server/db/schema";
 
 export default function SandboxPage() {
   return (
@@ -11,8 +11,10 @@ export default function SandboxPage() {
         action={async () => {
           "use server";
 
-          const folderInsertions = await db.insert(folders).values(mockFolders);
-          const filesInsertion = await db.insert(files).values(mockFiles);
+          const folderInsertions = await db
+            .insert(folders_table)
+            .values(mockFolders);
+          const filesInsertion = await db.insert(files_table).values(mockFiles);
 
           console.log(folderInsertions);
           console.log(filesInsertion);

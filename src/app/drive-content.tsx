@@ -6,11 +6,11 @@ import { Input } from "~/components/ui/input";
 import { Upload, Search, ChevronRight, Moon, Sun } from "lucide-react";
 import { cn } from "~/lib/utils";
 import { FileRow, FolderRow } from "./file-row";
-import type { files, folders } from "~/server/db/schema";
+import type { files_table, folders_table } from "~/server/db/schema";
 
 export default function DriveContent(props: {
-  files: (typeof files.$inferSelect)[];
-  folders: (typeof folders.$inferSelect)[];
+  files: (typeof files_table.$inferSelect)[];
+  folders: (typeof folders_table.$inferSelect)[];
 }) {
   const { files, folders } = props;
 

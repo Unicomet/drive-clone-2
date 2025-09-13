@@ -7,10 +7,10 @@ import {
   FolderIcon,
 } from "lucide-react";
 import { cn } from "~/lib/utils";
-import type { files } from "~/server/db/schema";
-import { type folders } from "../server/db/schema";
+import type { files_table } from "~/server/db/schema";
+import { type folders_table } from "../server/db/schema";
 
-const getFileIcon = (item: typeof files.$inferSelect) => {
+const getFileIcon = (item: typeof files_table.$inferSelect) => {
   switch (item.fileType) {
     case "document":
       return FileText;
@@ -27,7 +27,7 @@ const getFileIcon = (item: typeof files.$inferSelect) => {
   }
 };
 
-export function FileRow(props: { file: typeof files.$inferSelect }) {
+export function FileRow(props: { file: typeof files_table.$inferSelect }) {
   const { file } = props;
 
   const IconComponent = getFileIcon(file);
@@ -66,7 +66,7 @@ export function FileRow(props: { file: typeof files.$inferSelect }) {
 }
 
 export function FolderRow(props: {
-  folder: typeof folders.$inferSelect;
+  folder: typeof folders_table.$inferSelect;
   handleFolderClick: () => void;
 }) {
   const { folder, handleFolderClick } = props;
