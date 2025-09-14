@@ -8,6 +8,13 @@ import { cn } from "~/lib/utils";
 import { FileRow, FolderRow } from "./file-row";
 import type { files_table, folders_table } from "~/server/db/schema";
 import Link from "next/link";
+import {
+  SignedIn,
+  SignedOut,
+  SignInButton,
+  SignUpButton,
+  UserButton,
+} from "@clerk/nextjs";
 
 export default function DriveContent(props: {
   files: (typeof files_table.$inferSelect)[];
@@ -71,6 +78,12 @@ export default function DriveContent(props: {
                 <Moon className="h-4 w-4" />
               )}
             </Button>
+            <SignedOut>
+              <SignInButton />
+            </SignedOut>
+            <SignedIn>
+              <UserButton />
+            </SignedIn>
           </div>
         </div>
       </header>
