@@ -8,13 +8,7 @@ import { cn } from "~/lib/utils";
 import { FileRow, FolderRow } from "./file-row";
 import type { files_table, folders_table } from "~/server/db/schema";
 import Link from "next/link";
-import {
-  SignedIn,
-  SignedOut,
-  SignInButton,
-  SignUpButton,
-  UserButton,
-} from "@clerk/nextjs";
+import { SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/nextjs";
 
 export default function DriveContent(props: {
   files: (typeof files_table.$inferSelect)[];
@@ -94,7 +88,7 @@ export default function DriveContent(props: {
             className="mr-2 cursor-pointer font-medium hover:text-white"
             asChild
           >
-            <Link href="/f/0">My Drive</Link>
+            <Link href="/f/1">My Drive</Link>
           </Button>
           {breadcrumbs.map((folder, index) => (
             <div key={index} className="flex items-center">
