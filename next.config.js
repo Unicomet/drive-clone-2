@@ -12,6 +12,23 @@ const config = {
   typescript: {
     ignoreBuildErrors: true,
   },
+  async rewrites() {
+    //Set a reverse proxy for postHog analytics
+    return [
+      {
+        //Setting it for API calls
+        source: "/drive-clone-ph/static/:path*",
+        destination: "https://us.i.posthog.com/:path*",
+      },
+      {
+        //Setting it for API calls
+        source: "/drive-clone-ph/:path*",
+        destination: "https://us.i.posthog.com/:path*",
+      },
+    ];
+  },
+  // This is required to support PostHog trailing slash API requests
+  skipTrailingSlashRedirect: true,
 };
 
 export default config;
