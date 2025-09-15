@@ -7,7 +7,7 @@ import {
 } from "drizzle-orm/singlestore-core";
 
 export const createTable = singlestoreTableCreator(
-  (name) => `drive-clone_${name}`,
+  (name) => `drive_tutorial_${name}`,
 );
 
 export const files_table = createTable(
@@ -23,9 +23,13 @@ export const files_table = createTable(
     parent: bigint("parent", { mode: "number", unsigned: true }).notNull(),
     updatedAt: timestamp("updated_at").notNull().defaultNow(),
     createdAt: timestamp("created_at").notNull().defaultNow(),
+    ownerId: text("owner_id").notNull(),
   },
   (t) => {
-    return [index("parent_index").on(t.parent)];
+    return [
+      index("parent_index").on(t.parent),
+      index("owner_index").on(t.ownerId),
+    ];
   },
 );
 
@@ -39,8 +43,12 @@ export const folders_table = createTable(
     parent: bigint("parent", { mode: "number", unsigned: true }),
     updatedAt: timestamp("updated_at").notNull().defaultNow(),
     createdAt: timestamp("created_at").notNull().defaultNow(),
+    ownerId: text("owner_id").notNull(),
   },
   (t) => {
-    return [index("parent_index").on(t.parent)];
+    return [
+      index("parent_index").on(t.parent),
+      index("owner_index").on(t.ownerId),
+    ];
   },
 );

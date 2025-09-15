@@ -1,9 +1,11 @@
+import { auth } from "@clerk/nextjs/server";
+import { eq } from "drizzle-orm";
 import React from "react";
 import { mockFiles, mockFolders } from "~/lib/mock-data";
 import { db } from "~/server/db";
 import { files_table, folders_table } from "~/server/db/schema";
 
-export default function SandboxPage() {
+export default async function SandboxPage() {
   return (
     <div className="flex flex-col gap-3">
       Seed Function
@@ -11,13 +13,32 @@ export default function SandboxPage() {
         action={async () => {
           "use server";
 
-          const folderInsertions = await db
-            .insert(folders_table)
-            .values(mockFolders);
-          const filesInsertion = await db.insert(files_table).values(mockFiles);
+          const user = await auth();
+          if (!user || !user.userId) {
+            throw new Error("Unauthorized");
+          }
 
-          console.log(folderInsertions);
-          console.log(filesInsertion);
+          const rootFolder = await db
+            .insert(folders_table)
+            .values({
+              name: "root",
+              ownerId: user.userId,
+            })
+            .$returningId();
+
+          const folderInsertions = await db.insert(folders_table).values(
+            mockFolders.map((folder) => ({
+              ...folder,
+              ownerId: user.userId,
+              parent: rootFolder[0]!.id,
+            })),
+          );
+
+          const dbFolders = await db
+            .select()
+            .from(folders_table)
+            .where(eq(folders_table.ownerId, user.userId));
+          console.log(dbFolders);
         }}
       >
         {/* TODO: Implement form validation */}

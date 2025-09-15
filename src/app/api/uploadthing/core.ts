@@ -2,7 +2,7 @@ import { auth } from "@clerk/nextjs/server";
 import { createUploadthing, type FileRouter } from "uploadthing/next";
 import { UploadThingError } from "uploadthing/server";
 import { z } from "zod";
-import { DB_MUTATIONS } from "~/server/db/queries";
+import { DB_MUTATIONS, DB_QUERIES } from "~/server/db/queries";
 
 const f = createUploadthing();
 
@@ -33,6 +33,17 @@ export const ourFileRouter = {
       // eslint-disable-next-line @typescript-eslint/only-throw-error
       if (!user) throw new UploadThingError("Unauthorized");
 
+      const folder = await DB_QUERIES.getFolderById(input.folderId);
+      if (!folder) {
+        // eslint-disable-next-line @typescript-eslint/only-throw-error
+        throw new UploadThingError("Folder not found");
+      }
+
+      if (folder.ownerId !== user.userId) {
+        // eslint-disable-next-line @typescript-eslint/only-throw-error
+        throw new UploadThingError("Unauthorized");
+      }
+
       // Whatever is returned here is accessible in onUploadComplete as `metadata`
       return { userId: user.userId, folderId: input.folderId };
     })
@@ -44,6 +55,7 @@ export const ourFileRouter = {
         url: file.ufsUrl,
         fileType: file.type,
         size: file.size,
+        ownerId: metadata.userId,
       });
 
       console.log("Upload complete for userId:", metadata.userId);
