@@ -1,3 +1,5 @@
+import "server-only";
+
 import { db } from "~/server/db";
 import {
   files_table as filesSchema,
@@ -41,6 +43,12 @@ export const DB_QUERIES = {
       .from(foldersSchema)
       .where(eq(foldersSchema.id, folderId));
     return folder[0];
+  },
+  deleteFolderById: async function (folderId: number) {
+    return await db.delete(foldersSchema).where(eq(foldersSchema.id, folderId));
+  },
+  deleteFileById: async function (fileId: number) {
+    return await db.delete(filesSchema).where(eq(filesSchema.id, fileId));
   },
 };
 
