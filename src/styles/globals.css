@@ -4,6 +4,13 @@
 
 @custom-variant dark (&:is(.dark *));
 
+@layer base {
+  button:not(:disabled),
+  [role="button"]:not(:disabled) {
+    cursor: pointer;
+  }
+}
+
 :root {
   /* Updated to pure white theme with minimal color accents */
   --background: #ffffff;
