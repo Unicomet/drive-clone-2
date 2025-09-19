@@ -48,17 +48,17 @@ export function FileRow(props: { file: typeof files_table.$inferSelect }) {
               "text-accent group-hover:text-accent/80",
             )}
           />
-          <p className="truncate text-base font-semibold text-foreground transition-colors duration-200 group-hover:text-primary">
+          <p className="text-foreground group-hover:text-primary truncate text-base font-semibold transition-colors duration-200">
             {file.name}
           </p>
         </div>
       </a>
       <div className="flex-1"></div>
-      <div className="flex items-center space-x-8 text-sm text-muted-foreground">
+      <div className="text-muted-foreground flex items-center space-x-8 text-sm">
         <Button
           variant="ghost"
           size="icon"
-          className="h-9 w-9 rounded-full border border-border bg-transparent transition-colors duration-200 hover:bg-muted"
+          className="border-border hover:bg-muted h-9 w-9 rounded-full border bg-transparent transition-colors duration-200"
           onClick={async () => {
             await deleteFile(file.id);
           }}
@@ -70,7 +70,7 @@ export function FileRow(props: { file: typeof files_table.$inferSelect }) {
           {JSON.stringify(file.updatedAt)}
         </span>
         {file.size && (
-          <span className="w-24 rounded-md bg-muted px-2 py-1 text-right font-mono text-xs">
+          <span className="bg-muted w-24 rounded-md px-2 py-1 text-right font-mono text-xs">
             {file.size} KB
           </span>
         )}
@@ -94,24 +94,24 @@ export function FolderRow(props: {
               "text-accent group-hover:text-accent/80",
             )}
           />
-          <p className="truncate text-base font-semibold text-foreground transition-colors duration-200 group-hover:text-primary">
+          <p className="text-foreground group-hover:text-primary truncate text-base font-semibold transition-colors duration-200">
             {folder.name}
           </p>
         </div>
       </Link>
       <div className="flex-1"></div>
-      <div className="flex items-center space-x-8 text-sm text-muted-foreground">
+      <div className="text-muted-foreground flex items-center space-x-8 text-sm">
         <Button
           variant="ghost"
           size="icon"
-          className="h-9 w-9 rounded-full border border-border bg-transparent transition-colors duration-200 hover:bg-muted"
+          className="border-border hover:bg-muted h-9 w-9 rounded-full border bg-transparent transition-colors duration-200"
         >
           <Trash2Icon className="h-5 w-5 text-red-500" />
         </Button>
         <span className="w-28 text-right font-medium">
           {JSON.stringify(folder.updatedAt)}
         </span>
-        <span className="w-24 rounded-md bg-muted px-2 py-1 text-right font-mono text-xs">
+        <span className="bg-muted w-24 rounded-md px-2 py-1 text-right font-mono text-xs">
           Folder
         </span>
       </div>
