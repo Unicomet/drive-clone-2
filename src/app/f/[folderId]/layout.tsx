@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import { Search, Moon, Sun } from "lucide-react";
@@ -34,9 +35,11 @@ export default function RootLayout({
       <header className="border-border bg-card/50 border-b px-8 py-6 shadow-sm backdrop-blur-sm">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-8">
-            <h1 className="text-primary text-2xl font-bold tracking-tight">
-              Drive Clone
-            </h1>
+            <button>
+              <Link href="/" className="text-2xl font-semibold">
+                Drive Clone
+              </Link>
+            </button>
           </div>
           <div className="flex items-center space-x-6">
             <Search className="text-muted-foreground absolute ms-4 h-4 w-4 -translate-y-1/2 transform" />
