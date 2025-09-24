@@ -1,6 +1,5 @@
 "use client";
 
-import { useState, useEffect } from "react";
 import { Button } from "~/components/ui/button";
 import { ChevronRight } from "lucide-react";
 import { cn } from "~/lib/utils";
@@ -9,6 +8,7 @@ import type { files_table, folders_table } from "~/server/db/schema";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { UploadButton } from "~/components/uploadthings";
+import { DialogCreateFolder } from "./_components/dialog-create-folder";
 
 export default function DriveContent(props: {
   files: (typeof files_table.$inferSelect)[];
@@ -46,7 +46,7 @@ export default function DriveContent(props: {
             </div>
           ))}
         </nav>
-        <Button className="flex-0"> Create Folder</Button>
+        <DialogCreateFolder />
       </div>
       <div className="flex flex-col gap-y-4">
         {files.map((file) => (
