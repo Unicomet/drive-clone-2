@@ -45,7 +45,7 @@ export default function DriveContent(props: {
           </div>
         ))}
       </nav>
-      <div className="space-y-2">
+      <div className="flex flex-col gap-y-4">
         {files.map((file) => (
           <FileRow key={file.id} file={file} />
         ))}
