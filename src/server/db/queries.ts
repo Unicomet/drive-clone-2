@@ -6,7 +6,9 @@ import {
   folders_table as foldersSchema,
 } from "~/server/db/schema";
 import { eq, and, isNull, sql } from "drizzle-orm";
-import { create } from "domain";
+import { UTApi } from "uploadthing/server";
+
+const uploadThingsApi = new UTApi();
 
 export const DB_QUERIES = {
   getAllParentsForFolder: async function (folderId: number) {
@@ -91,7 +93,7 @@ export const DB_MUTATIONS = {
     return await db.insert(foldersSchema).values(folder).$returningId();
   },
   removeFolder: async function (folderId: number) {
-    const result = await db.transaction(async (tx) => {
+    await db.transaction(async (tx) => {
       await tx.execute(sql`
         CREATE TEMPORARY TABLE table_folder_tree (
             id BIGINT PRIMARY KEY
@@ -112,6 +114,16 @@ export const DB_MUTATIONS = {
         )
         SELECT id FROM folder_tree;
      `);
+
+      const geturlFilesToDelete = (await tx.execute(sql`
+        SELECT url FROM drive_tutorial_files
+        WHERE parent IN (SELECT id FROM table_folder_tree);
+      `)) as unknown as { url: string }[][];
+
+      const urlFilesToDelete = geturlFilesToDelete[0];
+
+      console.log(urlFilesToDelete);
+
       await tx.execute(sql`
         DELETE FROM drive_tutorial_files
         WHERE parent IN (SELECT id FROM table_folder_tree);
@@ -120,8 +132,21 @@ export const DB_MUTATIONS = {
         DELETE FROM drive_tutorial_folders
         WHERE id IN (SELECT id FROM table_folder_tree)
       `);
-    });
 
-    console.log(result);
+      if (!urlFilesToDelete || urlFilesToDelete.length === 0) {
+        tx.rollback();
+        return;
+      }
+
+      for (const { url } of urlFilesToDelete) {
+        const fileKey = url.replace("https://mdq5gee63i.ufs.sh/f/", "");
+        const utApiResult = await uploadThingsApi.deleteFiles(fileKey);
+
+        if (!utApiResult.success) {
+          console.error("Failed to delete file from uploadthing", url);
+          tx.rollback();
+        }
+      }
+    });
   },
 };

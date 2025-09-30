@@ -81,7 +81,8 @@ export async function removeFolder(folderId: number) {
     return { error: "Unauthorized" };
   }
 
-  await DB_MUTATIONS.removeFolder(folderId);
+  const result = await DB_MUTATIONS.removeFolder(folderId);
+  console.log(result);
 
   return { success: true };
 }
