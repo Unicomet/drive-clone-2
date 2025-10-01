@@ -1,5 +1,5 @@
 "use server";
-import { auth } from "@clerk/nextjs/server";
+import { auth, currentUser } from "@clerk/nextjs/server";
 import { DB_MUTATIONS, DB_QUERIES } from "./db/queries";
 import { db } from "./db";
 import { files_table, type folders_table } from "./db/schema";
@@ -7,8 +7,11 @@ import { and, eq } from "drizzle-orm";
 import { UTApi } from "uploadthing/server";
 import { cookies } from "next/headers";
 import { revalidatePath } from "next/cache";
+import { EmailTemplate } from "~/components/email-welcome";
+import { Resend } from "resend";
 
 const uploadThingsApi = new UTApi();
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 export async function deleteFolder(folderId: number) {
   const session = await auth();
@@ -84,5 +87,32 @@ export async function removeFolder(folderId: number) {
   const result = await DB_MUTATIONS.removeFolder(folderId);
   console.log(result);
 
+  return { success: true };
+}
+
+export async function sendOnboardingEmail() {
+  try {
+    const session = await currentUser();
+    const emailAddress = session?.emailAddresses[0]?.emailAddress;
+    if (!emailAddress) {
+      return { error: "Unauthorized" };
+    }
+
+    const firstName = session.firstName ?? "";
+
+    const { data, error } = await resend.emails.send({
+      from: "Acme <onboarding@resend.dev>",
+      to: [emailAddress],
+      subject: "Hello world",
+      react: EmailTemplate({ firstName }),
+    });
+
+    if (error) {
+      return { success: false, data: data };
+    }
+  } catch (error) {
+    console.log(error);
+    return { success: false };
+  }
   return { success: true };
 }

@@ -1,6 +1,7 @@
 import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import { Button } from "~/components/ui/button";
+import { sendOnboardingEmail } from "~/server/actions";
 import { DB_MUTATIONS, DB_QUERIES } from "~/server/db/queries";
 
 export default async function DrivePage() {
@@ -19,6 +20,7 @@ export default async function DrivePage() {
           action={async () => {
             "use server";
             const newRootFolderId = await DB_MUTATIONS.onboardUser(user.userId);
+            await sendOnboardingEmail();
             redirect(`/f/${newRootFolderId}`);
           }}
         >
