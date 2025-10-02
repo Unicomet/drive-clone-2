@@ -52,3 +52,11 @@ export const folders_table = createTable(
     ];
   },
 );
+
+export const files_access = createTable("files_access", {
+  id: bigint("id", { mode: "number", unsigned: true })
+    .primaryKey()
+    .autoincrement(),
+  userId: text("user_id").notNull(),
+  fileId: bigint("file_ id", { mode: "number", unsigned: true }).notNull(),
+});

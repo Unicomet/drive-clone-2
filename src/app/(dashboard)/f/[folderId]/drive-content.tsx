@@ -3,7 +3,7 @@
 import { Button } from "~/components/ui/button";
 import { ChevronRight } from "lucide-react";
 import { cn } from "~/lib/utils";
-import { FileRow, FolderRow } from "./file-row";
+import { FileRow, FolderRow } from "../../file-row";
 import type { files_table, folders_table } from "~/server/db/schema";
 import Link from "next/link";
 import { useRouter } from "next/navigation";

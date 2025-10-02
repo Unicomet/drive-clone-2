@@ -1,3 +1,5 @@
+"use client";
+
 import {
   FileText,
   ImageIcon,
@@ -9,7 +11,7 @@ import {
 } from "lucide-react";
 import { cn } from "~/lib/utils";
 import type { files_table } from "~/server/db/schema";
-import { type folders_table } from "../../../server/db/schema";
+import { type folders_table } from "../../server/db/schema";
 import Link from "next/link";
 import { Button } from "~/components/ui/button";
 import { deleteFile, removeFolder } from "~/server/actions";
