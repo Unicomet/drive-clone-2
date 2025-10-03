@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
@@ -31,8 +31,6 @@ export default function RootLayout({
       document.documentElement.classList.add("light");
     }
   };
-
-  const [open, setOpen] = useState(false);
 
   return (
     <ShareFileDialogProvider>
