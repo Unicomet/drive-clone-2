@@ -1,8 +1,8 @@
 "use server";
-import { auth, currentUser } from "@clerk/nextjs/server";
+import { auth, currentUser, clerkClient } from "@clerk/nextjs/server";
 import { DB_MUTATIONS, DB_QUERIES } from "./db/queries";
 import { db } from "./db";
-import { files_table, type folders_table } from "./db/schema";
+import { files_access, files_table, type folders_table } from "./db/schema";
 import { and, eq } from "drizzle-orm";
 import { UTApi } from "uploadthing/server";
 import { cookies } from "next/headers";
@@ -114,5 +114,42 @@ export async function sendOnboardingEmail() {
     console.log(error);
     return { success: false };
   }
+  return { success: true };
+}
+
+export async function shareFileToUser(fileId: number, emailAddress: string) {
+  const session = await auth();
+  if (!session?.userId) {
+    return { error: "Unauthorized" };
+  }
+
+  //Check if this file is already shared with this user
+
+  //Add user so that have access to the file
+  const client = await clerkClient();
+  const { data, totalCount } = await client.users.getUserList({
+    query: emailAddress,
+  });
+
+  console.log("Clerk Backend User Search Result:", data);
+  if (!data?.[0]) {
+    return { error: "User not found" };
+  }
+
+  const userId = data[0].id;
+
+  const [result] = await db
+    .insert(files_access)
+    .values({
+      userId: userId,
+      fileId: fileId,
+    })
+    .$returningId();
+
+  if (!result) {
+    return { error: "Failed to share file" };
+  }
+
+  console.log(result);
   return { success: true };
 }

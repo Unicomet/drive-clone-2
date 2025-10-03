@@ -8,6 +8,7 @@ import {
   Archive,
   FolderIcon,
   Trash2Icon,
+  Share2Icon,
 } from "lucide-react";
 import { cn } from "~/lib/utils";
 import type { files_table } from "~/server/db/schema";
@@ -16,6 +17,8 @@ import Link from "next/link";
 import { Button } from "~/components/ui/button";
 import { deleteFile, removeFolder } from "~/server/actions";
 import { useRouter } from "next/navigation";
+import { DialogShareFile } from "./file/[fileId]/_components/dialog-share-file";
+import { useShareFileDialog } from "../_providers/shareFileDialog/use-share-file-dialog";
 
 const getFileIcon = (item: typeof files_table.$inferSelect) => {
   switch (item.fileType) {
@@ -40,6 +43,11 @@ const getFormattedDate = (date: Date) => {
 
 export function FileRow(props: { file: typeof files_table.$inferSelect }) {
   const { file } = props;
+  const {
+    isOpen: isShareDialogOpen,
+    setIsOpen: setShareDialogOpen,
+    setFileId: setShareDialogFileId,
+  } = useShareFileDialog();
 
   const IconComponent = getFileIcon(file);
   return (
@@ -62,6 +70,18 @@ export function FileRow(props: { file: typeof files_table.$inferSelect }) {
       </a>
       <div className="flex-1"></div>
       <div className="text-muted-foreground flex items-center space-x-8 text-sm">
+        <Button
+          size="icon"
+          className="border-border hover:bg-muted h-9 w-9 rounded-full border bg-transparent transition-colors duration-200"
+          aria-label="Share file"
+          onClick={() => {
+            console.log(isShareDialogOpen);
+            setShareDialogFileId(file.id);
+            setShareDialogOpen(true);
+          }}
+        >
+          <Share2Icon className="h-5 w-5 text-white" />
+        </Button>
         <Button
           variant="ghost"
           size="icon"

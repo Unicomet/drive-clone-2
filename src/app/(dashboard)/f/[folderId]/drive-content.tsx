@@ -9,6 +9,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { UploadButton } from "~/components/uploadthings";
 import { DialogCreateFolder } from "./_components/dialog-create-folder";
+import { DialogShareFile } from "../../file/[fileId]/_components/dialog-share-file";
 
 export default function DriveContent(props: {
   files: (typeof files_table.$inferSelect)[];
