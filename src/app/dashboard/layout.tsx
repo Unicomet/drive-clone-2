@@ -8,6 +8,7 @@ import { Search, Moon, Sun } from "lucide-react";
 import { SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/nextjs";
 import ShareFileDialogProvider from "../_providers/shareFileDialog/share-file-dialog-provider";
 import { DialogShareFile } from "./file/[fileId]/_components/dialog-share-file";
+import { Toaster } from "sonner";
 
 export default function RootLayout({
   children,
@@ -82,6 +83,7 @@ export default function RootLayout({
         </main>
       </div>
       <DialogShareFile />
+      <Toaster theme="dark" />
     </ShareFileDialogProvider>
   );
 }

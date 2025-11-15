@@ -10,6 +10,7 @@ import { useRouter } from "next/navigation";
 import { UploadButton } from "~/components/uploadthings";
 import { DialogCreateFolder } from "./_components/dialog-create-folder";
 import { DialogShareFile } from "../../file/[fileId]/_components/dialog-share-file";
+import { toast } from "sonner";
 
 export default function DriveContent(props: {
   files: (typeof files_table.$inferSelect)[];
@@ -66,10 +67,12 @@ export default function DriveContent(props: {
           // Do something with the response
           console.log("Files uploaded: ", res);
           navigate.refresh();
+          toast.success("Upload complete!");
         }}
         onUploadError={(error: Error) => {
           // Do something with the error.
-          alert(`ERROR! ${error.message}`);
+          console.error("Failed to upload a file: ", error.message);
+          toast.error(`Upload failed`);
         }}
         input={{ folderId: props.currentFolderId }}
       />
