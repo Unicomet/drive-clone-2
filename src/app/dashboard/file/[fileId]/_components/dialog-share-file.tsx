@@ -44,8 +44,8 @@ export function DialogShareFile() {
                 Email Address
               </Label>
               <Input
+                placeholder="example@gmail.com"
                 id="emailAddress"
-                defaultValue="example@gmail.com"
                 value={emailAddress}
                 onChange={(e) => setEmailAddress(e.target.value)}
               />

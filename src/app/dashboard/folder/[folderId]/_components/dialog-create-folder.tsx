@@ -44,7 +44,7 @@ export function DialogCreateFolder(props: { currentFolderId: number }) {
               </Label>
               <Input
                 id="folderName"
-                defaultValue="Folder name"
+                placeholder="Folder Name"
                 value={folderName}
                 onChange={(e) => setFolderName(e.target.value)}
               />
