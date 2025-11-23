@@ -34,12 +34,20 @@ export async function deleteFile(fileId: number) {
     return { success: false, error: "Unauthorized" };
   }
 
+  const [fileData] = await db
+    .select({ ownerId: files_table.ownerId })
+    .from(files_table)
+    .where(eq(files_table.id, fileId));
+
+  const isOwner = fileData?.ownerId === session.userId;
+
   const resource = {
     id: fileId,
     type: "file" as const,
   };
 
-  const isAuthorized = await hasPermission(session.userId, resource, "delete");
+  const isAuthorized =
+    (await hasPermission(session.userId, resource, "delete")) || isOwner;
   if (!isAuthorized) {
     return { success: false, error: "You are not allowed to delete this file" };
   }
