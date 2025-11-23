@@ -47,8 +47,6 @@ export function FileRow(props: { file: typeof files_table.$inferSelect }) {
     isOpen: isShareDialogOpen,
     setIsOpen: setShareDialogOpen,
     setFileId: setShareDialogFileId,
-    setInvitedUsersEmails,
-    setInvitedUsersIds,
   } = useShareFileDialog();
 
   const IconComponent = getFileIcon(file);
