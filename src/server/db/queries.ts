@@ -5,8 +5,10 @@ import {
   files_table as filesSchema,
   folders_table as foldersSchema,
 } from "~/server/db/schema";
-import { eq, and, isNull } from "drizzle-orm";
-import { create } from "domain";
+import { eq, and, isNull, sql } from "drizzle-orm";
+import { UTApi } from "uploadthing/server";
+
+const uploadThingsApi = new UTApi();
 
 export const DB_QUERIES = {
   getAllParentsForFolder: async function (folderId: number) {
@@ -89,5 +91,62 @@ export const DB_MUTATIONS = {
   },
   createFolder: async function (folder: typeof foldersSchema.$inferInsert) {
     return await db.insert(foldersSchema).values(folder).$returningId();
+  },
+  removeFolder: async function (folderId: number) {
+    await db.transaction(async (tx) => {
+      await tx.execute(sql`
+        CREATE TEMPORARY TABLE table_folder_tree (
+            id BIGINT PRIMARY KEY
+        )
+      `);
+      await tx.execute(sql`
+        INSERT INTO table_folder_tree (id)
+        WITH RECURSIVE folder_tree AS (
+          SELECT id
+          FROM drive_tutorial_folders
+          WHERE id = ${folderId}
+
+          UNION ALL
+
+          SELECT f.id
+          FROM drive_tutorial_folders f
+          INNER JOIN folder_tree ft ON f.parent = ft.id
+        )
+        SELECT id FROM folder_tree;
+     `);
+
+      const geturlFilesToDelete = (await tx.execute(sql`
+        SELECT url FROM drive_tutorial_files
+        WHERE parent IN (SELECT id FROM table_folder_tree);
+      `)) as unknown as { url: string }[][];
+
+      const urlFilesToDelete = geturlFilesToDelete[0];
+
+      console.log(urlFilesToDelete);
+
+      await tx.execute(sql`
+        DELETE FROM drive_tutorial_files
+        WHERE parent IN (SELECT id FROM table_folder_tree);
+      `);
+      await tx.execute(sql`
+        DELETE FROM drive_tutorial_folders
+        WHERE id IN (SELECT id FROM table_folder_tree)
+      `);
+
+      if (!urlFilesToDelete || urlFilesToDelete.length === 0) {
+        tx.rollback();
+        return;
+      }
+
+      for (const { url } of urlFilesToDelete) {
+        const fileKey = url.replace("https://mdq5gee63i.ufs.sh/folder/", "");
+        const utApiResult = await uploadThingsApi.deleteFiles(fileKey);
+
+        if (!utApiResult.success) {
+          console.error("Failed to delete file from uploadthing", url);
+          tx.rollback();
+        }
+      }
+    });
   },
 };

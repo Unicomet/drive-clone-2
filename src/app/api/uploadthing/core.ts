@@ -10,13 +10,14 @@ const f = createUploadthing();
 export const ourFileRouter = {
   // Define as many FileRoutes as you like, each with a unique routeSlug
   imageUploader: f({
-    image: {
+    blob: {
       /**
        * For full list of options and defaults, see the File Route API reference
        * @see https://docs.uploadthing.com/file-routes#route-config
        */
       maxFileSize: "4MB",
-      maxFileCount: 1,
+
+      maxFileCount: 5,
     },
   })
     .input(
@@ -54,7 +55,7 @@ export const ourFileRouter = {
         parent: metadata.folderId,
         url: file.ufsUrl,
         fileType: file.type,
-        size: file.size,
+        size: file.size, //It is saved in bytes
         ownerId: metadata.userId,
       });
 

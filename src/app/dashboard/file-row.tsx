@@ -1,3 +1,5 @@
+"use client";
+
 import {
   FileText,
   ImageIcon,
@@ -6,13 +8,17 @@ import {
   Archive,
   FolderIcon,
   Trash2Icon,
+  Share2Icon,
 } from "lucide-react";
 import { cn } from "~/lib/utils";
 import type { files_table } from "~/server/db/schema";
-import { type folders_table } from "../../../server/db/schema";
+import { type folders_table } from "../../server/db/schema";
 import Link from "next/link";
 import { Button } from "~/components/ui/button";
-import { deleteFile } from "~/server/actions";
+import { deleteFile, removeFolder } from "~/server/actions";
+import { useRouter } from "next/navigation";
+import { useShareFileDialog } from "../_providers/shareFileDialog/use-share-file-dialog";
+import { toast } from "sonner";
 
 const getFileIcon = (item: typeof files_table.$inferSelect) => {
   switch (item.fileType) {
@@ -31,8 +37,17 @@ const getFileIcon = (item: typeof files_table.$inferSelect) => {
   }
 };
 
+const getFormattedDate = (date: Date) => {
+  return date.toLocaleDateString();
+};
+
 export function FileRow(props: { file: typeof files_table.$inferSelect }) {
   const { file } = props;
+  const {
+    isOpen: isShareDialogOpen,
+    setIsOpen: setShareDialogOpen,
+    setFileId: setShareDialogFileId,
+  } = useShareFileDialog();
 
   const IconComponent = getFileIcon(file);
   return (
@@ -48,30 +63,48 @@ export function FileRow(props: { file: typeof files_table.$inferSelect }) {
               "text-accent group-hover:text-accent/80",
             )}
           />
-          <p className="truncate text-base font-semibold text-foreground transition-colors duration-200 group-hover:text-primary">
+          <p className="text-foreground group-hover:text-primary truncate text-base font-semibold transition-colors duration-200">
             {file.name}
           </p>
         </div>
       </a>
       <div className="flex-1"></div>
-      <div className="flex items-center space-x-8 text-sm text-muted-foreground">
+      <div className="text-muted-foreground flex items-center space-x-8 text-sm">
+        <Button
+          size="icon"
+          className="border-border hover:bg-muted h-9 w-9 rounded-full border bg-transparent transition-colors duration-200"
+          aria-label="Share file"
+          onClick={() => {
+            console.log(isShareDialogOpen);
+
+            setShareDialogFileId(file.id);
+            setShareDialogOpen(true);
+          }}
+        >
+          <Share2Icon className="h-5 w-5 text-white" />
+        </Button>
         <Button
           variant="ghost"
           size="icon"
-          className="h-9 w-9 rounded-full border border-border bg-transparent transition-colors duration-200 hover:bg-muted"
+          className="border-border hover:bg-muted h-9 w-9 rounded-full border bg-transparent transition-colors duration-200"
           onClick={async () => {
-            await deleteFile(file.id);
+            const { success, error } = await deleteFile(file.id);
+            if (!success) {
+              toast.error(error ?? "Failed to delete file");
+              return;
+            }
+            toast.success("File deleted successfully");
           }}
           aria-label="Delete file"
         >
           <Trash2Icon className="h-5 w-5 text-red-500" />
         </Button>
         <span className="w-28 text-right font-medium">
-          {JSON.stringify(file.updatedAt)}
+          {getFormattedDate(file.updatedAt)}
         </span>
         {file.size && (
-          <span className="w-24 rounded-md bg-muted px-2 py-1 text-right font-mono text-xs">
-            {file.size} KB
+          <span className="bg-muted flex w-20 justify-center rounded-md px-2 py-1 text-center font-mono text-xs">
+            {Math.round(file.size / 1000)} KB
           </span>
         )}
       </div>
@@ -83,10 +116,14 @@ export function FolderRow(props: {
   folder: typeof folders_table.$inferSelect;
 }) {
   const { folder } = props;
+  const router = useRouter();
 
   return (
     <div className="group flex cursor-pointer items-center rounded-xl border-b p-5 transition-all duration-200 hover:border-gray-100">
-      <Link href={`/f/${folder.id}`} className="mr-5 flex items-center gap-6">
+      <Link
+        href={`/dashboard/folder/${folder.id}`}
+        className="mr-5 flex items-center gap-6"
+      >
         <div className="mr-5 flex items-center gap-6">
           <FolderIcon
             className={cn(
@@ -94,24 +131,28 @@ export function FolderRow(props: {
               "text-accent group-hover:text-accent/80",
             )}
           />
-          <p className="truncate text-base font-semibold text-foreground transition-colors duration-200 group-hover:text-primary">
+          <p className="text-foreground group-hover:text-primary truncate text-base font-semibold transition-colors duration-200">
             {folder.name}
           </p>
         </div>
       </Link>
       <div className="flex-1"></div>
-      <div className="flex items-center space-x-8 text-sm text-muted-foreground">
+      <div className="text-muted-foreground flex items-center space-x-8 text-sm">
         <Button
           variant="ghost"
           size="icon"
-          className="h-9 w-9 rounded-full border border-border bg-transparent transition-colors duration-200 hover:bg-muted"
+          className="border-border hover:bg-muted h-9 w-9 rounded-full border bg-transparent transition-colors duration-200"
+          onClick={async () => {
+            await removeFolder(folder.id);
+            router.refresh();
+          }}
         >
           <Trash2Icon className="h-5 w-5 text-red-500" />
         </Button>
         <span className="w-28 text-right font-medium">
-          {JSON.stringify(folder.updatedAt)}
+          {getFormattedDate(folder.updatedAt)}
         </span>
-        <span className="w-24 rounded-md bg-muted px-2 py-1 text-right font-mono text-xs">
+        <span className="bg-muted flex w-20 justify-center rounded-md px-2 py-1 text-center font-mono text-xs">
           Folder
         </span>
       </div>

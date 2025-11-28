@@ -18,6 +18,9 @@ export const env = createEnv({
     SINGLESTORE_DB_NAME: z.string(),
     CLERK_SECRET_KEY: z.string(),
     UPLOADTHING_TOKEN: z.string(),
+    RESEND_API_KEY: z.string(),
+    STRIPE_WEBHOOK_SECRET: z.string(),
+    STRIPE_SECRET_KEY: z.string(),
   },
 
   /**
@@ -48,6 +51,9 @@ export const env = createEnv({
     UPLOADTHING_TOKEN: process.env.UPLOADTHING_TOKEN,
     NEXT_PUBLIC_POSTHOG_KEY: process.env.NEXT_PUBLIC_POSTHOG_KEY,
     NEXT_PUBLIC_POSTHOG_HOST: process.env.NEXT_PUBLIC_POSTHOG_HOST,
+    RESEND_API_KEY: process.env.RESEND_API_KEY,
+    STRIPE_WEBHOOK_SECRET: process.env.STRIPE_WEBHOOK_SECRET,
+    STRIPE_SECRET_KEY: process.env.STRIPE_SECRET_KEY,
   },
   /**
    * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially
