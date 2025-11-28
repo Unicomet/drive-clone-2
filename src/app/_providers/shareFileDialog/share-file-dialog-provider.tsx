@@ -1,15 +1,18 @@
 import { createContext, useState } from "react";
 
-export const DialogShareFileContext = createContext({
-  isOpen: false,
-  setIsOpen: (isOpen: boolean) => {},
-  fileId: 0,
-  setFileId: (fileId: number) => {},
-  invitedUsersIds: [] as number[],
-  setInvitedUsersIds: (userIds: number[]) => {},
-  invitedUsersEmails: [] as string[],
-  setInvitedUsersEmails: (userEmails: string[]) => {},
-});
+interface DialogShareFileContextType {
+  isOpen: boolean;
+  setIsOpen: (isOpen: boolean) => void;
+  fileId: number;
+  setFileId: (fileId: number) => void;
+  invitedUsersIds: number[];
+  setInvitedUsersIds: (userIds: number[]) => void;
+  invitedUsersEmails: string[];
+  setInvitedUsersEmails: (userEmails: string[]) => void;
+}
+
+export const DialogShareFileContext =
+  createContext<DialogShareFileContextType | null>(null);
 
 export default function ShareFileDialogProvider({
   children,
