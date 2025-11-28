@@ -1,9 +1,9 @@
 import { auth } from "@clerk/nextjs/server";
 import { eq } from "drizzle-orm";
 import React from "react";
-import { mockFiles, mockFolders } from "~/lib/mock-data";
+import { mockFolders } from "~/lib/mock-data";
 import { db } from "~/server/db";
-import { files_table, folders_table } from "~/server/db/schema";
+import { folders_table } from "~/server/db/schema";
 
 export default async function SandboxPage() {
   return (
