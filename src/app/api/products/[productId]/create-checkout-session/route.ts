@@ -41,6 +41,7 @@ export async function POST(request: Request) {
     ],
     mode: "subscription",
     success_url: `${YOUR_DOMAIN}/purchase/success?session_id={CHECKOUT_SESSION_ID}`,
+    // consent_collection: { terms_of_service: "required" }, // Uncomment this line to require terms of service acceptance, you require to activate your business on Stripe Dashboard
   });
 
   if (session?.url == null)
