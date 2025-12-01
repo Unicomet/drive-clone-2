@@ -1,5 +1,8 @@
+"use server";
+
 import { Button } from "~/components/ui/button";
 import { env } from "~/env";
+import { createCheckoutSession } from "~/server/subscriptions/actions";
 
 declare global {
   // eslint-disable-next-line @typescript-eslint/no-namespace
@@ -38,8 +41,11 @@ export default function PricingPage() {
         ></stripe-pricing-table>
       </div>
       <form
-        action={"/api/products/starter-d1cb1df/create-checkout-session"}
-        method="POST"
+        // onSubmit={async () => {
+        //   "use server";
+        //   return createCheckoutSession;
+        // }}
+        action={createCheckoutSession}
         className="text-center"
       >
         <input
