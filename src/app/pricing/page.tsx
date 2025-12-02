@@ -41,12 +41,23 @@ export default function PricingPage() {
       <form action={createCheckoutSession} className="text-center">
         <input
           type="hidden"
-          id="lookup_key"
-          name="lookup_key"
+          id="subscription_tier"
+          name="subscription_tier"
           value="starter_monthly"
         />
         <Button id="checkout-and-portal-button" type="submit">
           Suscribe to Starter Plan
+        </Button>
+      </form>
+      <form action={createCheckoutSession} className="text-center">
+        <input
+          type="hidden"
+          id="subscription_tier"
+          name="subscription_tier"
+          value="pro_monthly"
+        />
+        <Button id="checkout-and-portal-button" type="submit">
+          Suscribe to Pro Plan
         </Button>
       </form>
     </div>

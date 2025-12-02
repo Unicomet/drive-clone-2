@@ -1,6 +1,7 @@
 import { Redis } from "@upstash/redis";
 import { stripe } from "./stripe";
 import type { Stripe } from "stripe";
+import { env } from "~/env";
 
 export const redis = Redis.fromEnv();
 
@@ -41,6 +42,7 @@ export async function getStripeSubByUserId(userId: string) {
     "[Stripe][Get Sub] - Retrieved Stripe Customer ID:",
     stripeCustomerId,
   );
+
   if (!stripeCustomerId) {
     return null;
   }
@@ -62,6 +64,19 @@ export async function syncStripeDataToKv(stripeCustomerId: string) {
 
   const subscription = subscriptions.data[0];
 
+  let subscriptionTier: "starter_monthly" | "pro_monthly" | "unknown";
+
+  switch (subscription.items.data[0]?.price.id) {
+    case env.STRIPE_PRICE_ID_STARTER_MONTHLY:
+      subscriptionTier = "starter_monthly";
+      break;
+    case env.STRIPE_PRICE_ID_PRO_MONTHLY:
+      subscriptionTier = "pro_monthly";
+      break;
+    default:
+      subscriptionTier = "unknown";
+  }
+
   // Store complete subscription state
   const subData = {
     subscriptionId: subscription.id,
@@ -79,7 +94,10 @@ export async function syncStripeDataToKv(stripeCustomerId: string) {
             last4: subscription.default_payment_method.card?.last4 ?? null,
           }
         : null,
+    subscriptionTier,
   };
+
+  console.log(subData);
   await STRIPE_SUB_CACHE_KV.set(stripeCustomerId, subData);
   return subData;
 }

@@ -10,13 +10,14 @@ const domain = "http://localhost:3000";
 
 export async function createCheckoutSession(formData: FormData) {
   // eslint-disable-next-line @typescript-eslint/no-base-to-string
-  const return_url = formData.get("return_url")?.toString() ?? "/drive";
+  const subscriptionTier = formData.get("subscription_tier")?.toString();
   const session = await auth();
   if (!session.userId) {
     redirect("/login");
   }
 
-  // Check if user has already an active subscription
+  // // I disabled this because prevents users to subscribe when they left checkout and didn't subscribe
+  // // Check if user has already an active subscription
   // const existingSub = await getStripeSubByUserId(session.userId);
   // if (existingSub) {
   //   throw new Error("You already have an active subscription");
@@ -51,7 +52,7 @@ export async function createCheckoutSession(formData: FormData) {
   const checkoutSession = await stripe.checkout.sessions.create({
     customer: stripeCustomerId,
     success_url: `${domain}/purchase/success?session_id={CHECKOUT_SESSION_ID}`,
-    cancel_url: `${domain}${return_url}`,
+    cancel_url: `${domain}/drive`,
     subscription_data: {
       metadata: {
         userId: session.userId,
@@ -61,7 +62,10 @@ export async function createCheckoutSession(formData: FormData) {
     mode: "subscription",
     line_items: [
       {
-        price: env.STRIPE_PRICE_ID_STARTER_MONTHLY,
+        price:
+          subscriptionTier === "starter_monthly"
+            ? env.STRIPE_PRICE_ID_STARTER_MONTHLY
+            : env.STRIPE_PRICE_ID_PRO_MONTHLY,
         quantity: 1,
       },
     ],
