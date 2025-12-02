@@ -1,10 +1,10 @@
 "use server";
 
 import { auth, clerkClient } from "@clerk/nextjs/server";
-import { STRIPE_CUSTOMER_ID_KV } from "./store";
+import { STRIPE_CUSTOMER_ID_KV } from "../store";
 import { redirect } from "next/navigation";
 import { env } from "~/env";
-import { stripe } from "./stripe";
+import { stripe } from "../stripe";
 
 const domain = "http://localhost:3000";
 

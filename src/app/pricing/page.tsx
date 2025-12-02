@@ -1,6 +1,6 @@
 import { Button } from "~/components/ui/button";
 import { env } from "~/env";
-import { createCheckoutSession } from "~/server/subscriptions/actions";
+import { createCheckoutSession } from "~/server/subscriptions/actions/actions";
 
 declare global {
   // eslint-disable-next-line @typescript-eslint/no-namespace
