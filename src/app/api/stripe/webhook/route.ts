@@ -28,6 +28,7 @@ const allowedEvents: Stripe.Event.Type[] = [
 
 async function processEvent(event: Stripe.Event) {
   // Skip processing if the event isn't one I'm tracking (list of all events below)
+  console.log("[Stripe][WebHook] Event received: " + event.type);
   if (!allowedEvents.includes(event.type)) return;
 
   // All the events I track have a customerId
